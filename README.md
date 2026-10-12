@@ -1,4 +1,4 @@
-# Expense Sharing DAA Project
+# Expense Sharing Project
 
 A full-stack expense sharing application built with the MERN stack (MongoDB, Express, React, Node.js) that uses graph algorithms to optimize expense settlements.
 
