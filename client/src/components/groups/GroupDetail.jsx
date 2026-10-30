@@ -1,8 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import { unparse } from 'papaparse';
 import AuthContext from '../../context/AuthContext';
 import QRCodeModal from '../layout/QRCodeModal';
+import MemberList from './components/MemberList';
+import ExpenseList from './components/ExpenseList';
 import './GroupDetail.css';
 import './GroupErrorStyles.css';
 import './SettlementPlanIntegration.css';
@@ -312,25 +315,45 @@ const GroupDetail = () => {
         }
     };
 
-    // Helper function to check if a user has unsettled expenses
-    const hasUnsettledExpenses = (userId) => {
-        return expenses.some(expense => {
-            // Case 1: User is part of an expense and hasn't settled it
-            const userSplit = expense.splitAmong.find(split => split.user === userId);
-            if (userSplit && !userSplit.settled && expense.paidBy.user !== userId) {
-                return true;
+    const handleDeleteExpense = async (expense) => {
+        try {
+            if (!window.confirm('Are you sure you want to delete this expense?')) return;
+            await axios.delete(`/expenses/${expense._id}`);
+            setExpenses(prevExpenses => prevExpenses.filter(item => item._id !== expense._id));
+            const settlementRes = await axios.get(`/expenses/settlement/${id}`);
+            setSettlements(settlementRes.data);
+            if (socket) {
+                socket.emit('expense_deleted', { groupId: id, expenseId: expense._id });
             }
+        } catch (err) {
+            setError('Failed to delete expense');
+            console.error('Error deleting expense:', err);
+            setTimeout(() => setError(''), 5000);
+        }
+    };
 
-            // Case 2: User paid for an expense and others haven't settled with them
-            if (expense.paidBy.user === userId) {
-                return expense.splitAmong.some(split =>
-                    split.user !== userId && !split.settled
-                );
-            }
+    const handleExportCSV = () => {
+        const rows = expenses.map(expense => ({
+            Date: new Date(expense.date).toISOString(),
+            Description: expense.description,
+            Payer: expense.paidBy.name,
+            'Total Amount': Number(expense.amount).toFixed(2),
+            'My Share': Number(
+                expense.splitAmong.find(split => split.user === user._id)?.amount || 0
+            ).toFixed(2)
+        }));
+        const csv = unparse(rows);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const safeGroupName = group.name.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
+        link.href = url;
+        link.download = `fairshare-${safeGroupName || 'group'}-${new Date().toISOString().slice(0, 10)}.csv`;
+        link.click();
+        URL.revokeObjectURL(url);
+    };
 
-            return false;
-        });
-    };    // Leave group handler for non-owners
+    // Leave group handler for non-owners
     const handleLeaveGroup = async () => {
         if (!group || group.createdBy === user._id) return;
 
@@ -457,6 +480,9 @@ const GroupDetail = () => {
             <Link to={`/expenses/analysis/${id}`} className="btn btn-info">
                 <i className="fas fa-chart-pie"></i> View Expense Analysis
             </Link>
+            <button className="btn btn-light" onClick={handleExportCSV} disabled={expenses.length === 0}>
+                <i className="fas fa-file-csv"></i> Export CSV
+            </button>
             {/* Show Leave Group button for non-owners */}
             {group.createdBy !== user._id && (
                 <button className="btn btn-danger" onClick={handleLeaveGroup}>
@@ -465,117 +491,21 @@ const GroupDetail = () => {
             )}
         </div>
 
-        <div className="group-content">                <div className="members-section">
-            <h2>Members</h2>
-            <ul className="members-list">
-                {group.members.map(member => (
-                    <li key={member.user} className="member-item">                        <div className="member-info">
-                        <span className="member-name">{member.name}</span>
-                        <div className="member-contact">
-                            <span className="member-email">{member.email}</span>
-                            {member.phone && <span className="member-phone">{member.phone}</span>}
-                        </div>
-                        {member.user === group.createdBy && (
-                            <span className="owner-badge">Group Owner</span>
-                        )}
-                    </div>
-                        <div className="btn-group">
-                            {group.createdBy === user._id && member.user !== user._id && (
-                                <button
-                                    className="btn btn-danger btn-sm"
-                                    onClick={() => handleRemoveMember(member.user)}
-                                >
-                                    <i className="fas fa-user-minus"></i> Remove
-                                </button>
-                            )}
-                            {/* QR Code button - show for all members */}
-                            <button
-                                className="btn btn-secondary btn-sm"
-                                onClick={() => openQrModal(member)}
-                            >
-                                <i className="fas fa-qrcode"></i> QR Code
-                            </button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-
-            {/* Pending Invitations Section */}
-            {group.invitations && group.invitations.filter(invite => invite.status === 'pending').length > 0 && (
-                <div className="pending-invitations">
-                    <h3>Pending Invitations</h3>
-                    <ul className="invitations-list">
-                        {group.invitations
-                            .filter(invite => invite.status === 'pending')
-                            .map(invite => (<li key={invite.user} className="invitation-item">
-                                <div className="invitation-info">
-                                    <span className="invitee-name">{invite.name}</span>
-                                    <div className="invitee-contact">
-                                        {invite.invitedVia === 'email' ? (
-                                            <span className="invitee-email">{invite.email}</span>
-                                        ) : (
-                                            <span className="invitee-phone">{invite.phone}</span>
-                                        )}
-                                    </div>
-                                    <span className="invitation-status">Pending</span>
-                                </div>
-                            </li>
-                            ))}
-                    </ul>
-                </div>
-            )}                {/* Invite member form */}                <form onSubmit={handleInviteMember} className="invite-member-form">
-                <h3>Invite New Member</h3>
-                <p>Invite a person to this group by email or phone number.</p>
-
-                <div className="invite-method-selector">
-                    <div>
-                        <input
-                            type="radio"
-                            id="email-invite"
-                            name="inviteMethod"
-                            value="email"
-                            checked={inviteMethod === 'email'}
-                            onChange={(e) => setInviteMethod(e.target.value)}
-                        />
-                        <label htmlFor="email-invite">Email</label>
-                    </div>
-                    <div>
-                        <input
-                            type="radio"
-                            id="phone-invite"
-                            name="inviteMethod"
-                            value="phone"
-                            checked={inviteMethod === 'phone'}
-                            onChange={(e) => setInviteMethod(e.target.value)}
-                        />
-                        <label htmlFor="phone-invite">Phone Number</label>
-                    </div>
-                </div>
-
-                <div className="form-group">
-                    {inviteMethod === 'email' ? (
-                        <input
-                            type="email"
-                            placeholder="Enter email"
-                            value={newMemberEmail}
-                            onChange={(e) => setNewMemberEmail(e.target.value)}
-                            required
-                        />
-                    ) : (
-                        <input
-                            type="tel"
-                            placeholder="Enter phone"
-                            value={newMemberPhone}
-                            onChange={(e) => setNewMemberPhone(e.target.value)}
-                            required
-                        />
-                    )}
-                    <button type="submit" className="btn btn-primary">
-                        <i className="fas fa-paper-plane"></i> Send Invitation
-                    </button>
-                </div>
-            </form>
-        </div>                <div className="settlement-section">
+        <div className="group-content">
+            <MemberList
+                group={group}
+                user={user}
+                inviteMethod={inviteMethod}
+                newMemberEmail={newMemberEmail}
+                newMemberPhone={newMemberPhone}
+                onRemoveMember={handleRemoveMember}
+                onOpenQrModal={openQrModal}
+                onInviteMethodChange={(event) => setInviteMethod(event.target.value)}
+                onEmailChange={(event) => setNewMemberEmail(event.target.value)}
+                onPhoneChange={(event) => setNewMemberPhone(event.target.value)}
+                onInviteMember={handleInviteMember}
+            />
+            <div className="settlement-section">
                 <div className="payments-to-make">
                     <h2><i className="fas fa-arrow-up"></i> Payments You Need to Make</h2>
                     {settlements.filter(settlement => settlement.from.id === user._id).length === 0 ? (
@@ -941,91 +871,12 @@ const GroupDetail = () => {
                     )}
                 </div>
 
-                <div className="expense-history">
-                    <h2><i className="fas fa-history"></i> Expense History</h2>
-                    {expenses.length === 0 ? (
-                        <div className="empty-state">
-                            <i className="fas fa-receipt empty-icon"></i>
-                            <p>No expenses yet. Add one to get started!</p>
-                            <Link to={`/expenses/add/${id}`} className="btn btn-primary">
-                                <i className="fas fa-plus-circle"></i> Add First Expense
-                            </Link>
-                        </div>
-                    ) : (
-                        <div className="expenses-list history-list">
-                            {expenses.map(expense => (
-                                <div key={expense._id} className="expense-item history-item">
-                                    <div className="expense-header">
-                                        <h3>{expense.description}</h3>
-                                        <span className="expense-amount">Rs. {expense.amount.toFixed(2)}</span>
-                                        {expense.paidBy.user === user._id && (
-                                            <button
-                                                className="btn btn-danger btn-sm"
-                                                onClick={async () => {
-                                                    try {
-                                                        if (window.confirm('Are you sure you want to delete this expense?')) {
-                                                            try {
-                                                                await axios.delete(`/expenses/${expense._id}`);
-
-                                                                // Update the expenses state immediately
-                                                                setExpenses(prevExpenses =>
-                                                                    prevExpenses.filter(e => e._id !== expense._id)
-                                                                );
-
-                                                                // Refresh the settlement plan to reflect the changes immediately
-                                                                try {
-                                                                    const settlementRes = await axios.get(`/expenses/settlement/${id}`);
-                                                                    setSettlements(settlementRes.data);
-                                                                } catch (err) {
-                                                                    console.error('Error refreshing settlements after deletion:', err);
-                                                                }
-
-                                                                // Emit socket event for real-time update
-                                                                if (socket) {
-                                                                    console.log('Emitting expense_deleted event');
-                                                                    socket.emit('expense_deleted', {
-                                                                        groupId: id,
-                                                                        expenseId: expense._id
-                                                                    });
-                                                                }
-                                                            } catch (err) {
-                                                                setError('Failed to delete expense');
-                                                                console.error('Error deleting expense:', err);
-                                                                setTimeout(() => {
-                                                                    setError('');
-                                                                }, 5000);
-                                                            }
-                                                        }
-                                                    } catch (err) {
-                                                        setError('Failed to delete expense');
-                                                        console.error('Error deleting expense:', err);
-                                                    }
-                                                }}
-                                            >
-                                                <i className="fas fa-trash-alt"></i> Delete
-                                            </button>
-                                        )}
-                                    </div>
-                                    <div className="expense-details">
-                                        <p>Paid by: {expense.paidBy.name}</p>
-                                        <p>Date: {new Date(expense.date).toLocaleDateString()} {new Date(expense.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                        <p>Category: {expense.category}</p>
-                                    </div>
-                                    <div className="expense-splits">
-                                        <h4>Split Among:</h4>
-                                        <ul>
-                                            {expense.splitAmong.map(split => (
-                                                <li key={split.user} className="split-item">
-                                                    <span>{split.name}: Rs. {split.amount.toFixed(2)}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                <ExpenseList
+                    expenses={expenses}
+                    groupId={id}
+                    userId={user._id}
+                    onDeleteExpense={handleDeleteExpense}
+                />
             </div>
         </div>
 

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Expense = require('../models/Expense');
 const Group = require('../models/Group');
 const User = require('../models/User');
@@ -31,32 +32,44 @@ exports.addExpense = async (req, res) => {
         // Get user name
         const user = await User.findById(req.user.id);
 
-        // Create new expense
-        const newExpense = new Expense({
-            description,
-            amount,
-            paidBy: {
-                user: req.user.id,
-                name: user.name
-            },
-            splitAmong: splitAmong.map(split => ({
-                user: split.userId,
-                name: split.name,
-                amount: split.amount,
-                settled: false
-            })),
-            group: groupId,
-            category: category || 'Other'
-        });
+        const session = await mongoose.startSession();
+        try {
+            let expense;
+            await session.withTransaction(async () => {
+                const [createdExpense] = await Expense.create([{
+                    description,
+                    amount,
+                    paidBy: {
+                        user: req.user.id,
+                        name: user.name
+                    },
+                    splitAmong: splitAmong.map(split => ({
+                        user: split.userId,
+                        name: split.name,
+                        amount: split.amount,
+                        settled: false
+                    })),
+                    group: groupId,
+                    category: category || 'Other'
+                }], { session });
 
-        // Save expense
-        const expense = await newExpense.save();
+                const groupUpdate = await Group.updateOne(
+                    { _id: groupId },
+                    { $push: { expenses: createdExpense._id } },
+                    { session }
+                );
 
-        // Add expense to group
-        group.expenses.push(expense._id);
-        await group.save();
+                if (groupUpdate.matchedCount !== 1) {
+                    throw new Error('Group disappeared during expense creation');
+                }
 
-        res.json(expense);
+                expense = createdExpense;
+            });
+
+            res.json(expense);
+        } finally {
+            await session.endSession();
+        }
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
@@ -354,15 +367,27 @@ exports.deleteExpense = async (req, res) => {
             return res.status(403).json({ message: 'Not authorized to delete this expense' });
         }
 
-        // Find the group to remove expense reference
-        const group = await Group.findById(expense.group);
-        if (group) {
-            group.expenses = group.expenses.filter(id => id.toString() !== expenseId);
-            await group.save();
-        }
+        const session = await mongoose.startSession();
+        try {
+            await session.withTransaction(async () => {
+                const groupUpdate = await Group.updateOne(
+                    { _id: expense.group },
+                    { $pull: { expenses: expense._id } },
+                    { session }
+                );
 
-        // Delete the expense
-        await Expense.findByIdAndDelete(expenseId);
+                if (groupUpdate.matchedCount !== 1) {
+                    throw new Error('Group not found while deleting expense');
+                }
+
+                const expenseDelete = await Expense.deleteOne({ _id: expenseId }, { session });
+                if (expenseDelete.deletedCount !== 1) {
+                    throw new Error('Expense was not deleted');
+                }
+            });
+        } finally {
+            await session.endSession();
+        }
 
         res.json({ message: 'Expense deleted successfully' });
     } catch (err) {

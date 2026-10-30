@@ -451,6 +451,23 @@
 }
 
 @media (max-width: 768px) {
+  .dashboard-container {
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .dashboard-header,
+  .dashboard-actions,
+  .groups-section,
+  .invitations-section {
+    padding: 1rem;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.7rem;
+  }
+
   .groups {
     grid-template-columns: 1fr;
   }
@@ -467,6 +484,16 @@
   }
 
   .dashboard-actions .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .invitation-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .invitation-actions .btn {
     width: 100%;
   }
 }

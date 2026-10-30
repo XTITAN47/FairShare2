@@ -41,7 +41,8 @@
 .landing {
   position: relative;
   background: var(--blue-gradient);
-  height: 100vh;
+  min-height: calc(100dvh + 70px);
+  height: auto;
   width: 100%;
   margin-top: -70px; /* To compensate for the increased navbar height */
   color: white;
@@ -386,7 +387,17 @@
 
 @media (max-width: 768px) {
   .landing-inner {
-    padding-top: 100px;
+    min-height: calc(100dvh - 60px);
+    padding: 5rem 1rem 2rem;
+  }
+
+  .landing-container {
+    padding: 0;
+  }
+
+  .landing-logo {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
   }
   
   .landing h1 {
@@ -395,6 +406,7 @@
   
   .landing-description {
     font-size: 1.1rem;
+    margin-bottom: 1.5rem;
   }
   
   .signup-button {

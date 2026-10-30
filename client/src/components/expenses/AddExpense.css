@@ -13,7 +13,6 @@
   /* Status indicators for split validation */
   --status-ok: var(--primary-teal);
   --status-error: #e74c3c;
-}
 
   --button-green: #1abc9c;
   --button-green-hover: #16a085;
@@ -50,6 +49,26 @@
   /* Ensure proper margin for navbar */
   margin-top: 2rem;
   margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .expense-form,
+  .split-section,
+  .expense-summary {
+    padding: 1rem;
+  }
+
+  .expense-form .btn,
+  .expense-form input[type="submit"] {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .split-member,
+  .split-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
 }
 
 .container > .btn-light {

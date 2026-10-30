@@ -1,8 +1,28 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './QRCodeModal.css';
 
 const QRCodeModal = ({ isOpen, onClose, title, qrCodeUrl, userName, selectedUser }) => {
     const modalRef = useRef(null);
+    const [copyConfirmation, setCopyConfirmation] = useState('');
+    const upiId = selectedUser?.upiId || selectedUser?.upiID || selectedUser?.paymentUpiId;
+    const settlementAmount = Number(selectedUser?.settlementAmount);
+    const upiDeepLink = upiId && Number.isFinite(settlementAmount) && settlementAmount > 0
+        ? `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(userName)}&am=${settlementAmount.toFixed(2)}&cu=INR`
+        : '';
+
+    const handleCopyUpiId = async () => {
+        if (!upiId) return;
+
+        try {
+            await navigator.clipboard.writeText(upiId);
+            setCopyConfirmation('UPI ID copied');
+            setTimeout(() => setCopyConfirmation(''), 3000);
+        } catch (error) {
+            console.error('Unable to copy UPI ID:', error);
+            setCopyConfirmation('Copy failed');
+            setTimeout(() => setCopyConfirmation(''), 3000);
+        }
+    };
 
     // Close modal when clicking outside
     useEffect(() => {
@@ -79,6 +99,21 @@ const QRCodeModal = ({ isOpen, onClose, title, qrCodeUrl, userName, selectedUser
                             <p className="qr-modal-instructions">
                                 <i className="fas fa-info-circle"></i> Use your banking app to scan this QR code and pay
                             </p>
+                            {upiId && (
+                                <div className="qr-modal-upi-actions">
+                                    <button
+                                        className="btn btn-primary qr-modal-upi-pay"
+                                        onClick={() => window.location.assign(upiDeepLink)}
+                                        disabled={!upiDeepLink}
+                                    >
+                                        Pay Now via UPI App
+                                    </button>
+                                    <button className="btn btn-secondary" onClick={handleCopyUpiId}>
+                                        Copy UPI ID
+                                    </button>
+                                    {copyConfirmation && <span role="status">{copyConfirmation}</span>}
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <div className="qr-modal-no-qr">

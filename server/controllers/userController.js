@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
@@ -30,13 +30,13 @@ exports.registerUser = async (req, res) => {
         const normalizedPhone = phone.trim();
 
         // Check if user already exists with the same email
-        let userByEmail = await User.findOne({ email: normalizedEmail });
+        let userByEmail = await User.findOne({ email: normalizedEmail }).select('_id').lean();
         if (userByEmail) {
             return res.status(400).json({ message: 'User with this email already exists' });
         }
 
         // Check if user already exists with the same phone
-        let userByPhone = await User.findOne({ phone: normalizedPhone });
+        let userByPhone = await User.findOne({ phone: normalizedPhone }).select('_id').lean();
         if (userByPhone) {
             return res.status(400).json({ message: 'User with this phone number already exists' });
         }
@@ -50,14 +50,18 @@ exports.registerUser = async (req, res) => {
         });
 
         // Hash password
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(password, salt);
+        user.password = await bcrypt.hash(password, 10);
 
         // Save user to database
         await user.save();
 
         // Create JWT token
-        res.json({ token: signToken(user.id) });
+        res.json({
+            _id: user.id,
+            name: user.name,
+            email: user.email,
+            token: signToken(user.id)
+        });
     } catch (err) {
         console.error(err.message);
         if (err.code === 11000) {
@@ -79,9 +83,13 @@ exports.loginUser = async (req, res) => {
         // Check if user exists by email or phone
         let user;
         if (isNonEmptyString(email)) {
-            user = await User.findOne({ email: email.trim().toLowerCase() });
+            user = await User.findOne({ email: email.trim().toLowerCase() })
+                .select('_id name email password')
+                .lean();
         } else if (phone) {
-            user = await User.findOne({ phone: phone.trim() });
+            user = await User.findOne({ phone: phone.trim() })
+                .select('_id name email password')
+                .lean();
         }
 
         if (!user) {
@@ -95,7 +103,12 @@ exports.loginUser = async (req, res) => {
         }
 
         // Create JWT token
-        res.json({ token: signToken(user.id) });
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            token: signToken(user._id)
+        });
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ message: 'Server error' });
@@ -228,8 +241,7 @@ exports.changePassword = async (req, res) => {
         }
 
         // Hash new password
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(newPassword, salt);
+        user.password = await bcrypt.hash(newPassword, 10);
 
         // Save user with new password
         await user.save();

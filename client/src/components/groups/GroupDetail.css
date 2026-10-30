@@ -839,6 +839,15 @@ section.container {
 }
 
 @media (max-width: 768px) {
+  section.container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .group-header h1 {
+    font-size: 1.45rem;
+  }
+
   .group-content {
     grid-template-columns: 1fr;
   }
@@ -873,6 +882,47 @@ section.container {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+
+  .member-item {
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .member-info,
+  .member-item .btn-group {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .member-item .btn-group {
+    justify-content: stretch;
+    margin-left: 0;
+  }
+
+  .member-item .btn-group .btn {
+    flex: 1;
+    margin-left: 0;
+  }
+
+  .invite-method-selector {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .settlement-item,
+  .settlement-header,
+  .settlement-actions {
+    width: 100%;
+  }
+
+  .settlement-header {
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .settlement-amount {
+    margin-left: auto;
   }
 }
 
