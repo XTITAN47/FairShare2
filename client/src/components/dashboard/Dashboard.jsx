@@ -15,6 +15,9 @@ const Dashboard = () => {
     const [error, setError] = useState("");
     const [showQRCodeNotification, setShowQRCodeNotification] = useState(false);
     const [qrModalOpen, setQRModalOpen] = useState(false);
+    const [groupSearch, setGroupSearch] = useState("");
+    const [groupSort, setGroupSort] = useState("recent");
+    const [groupView, setGroupView] = useState("grid");
 
     const fetchGroupsWithTotals = useCallback(async () => {
         const groupsRes = await axios.get("/groups");
@@ -215,6 +218,19 @@ const Dashboard = () => {
         }
     }, [user, loading]);
 
+    const filteredGroups = groups
+        .filter((group) => {
+            const search = groupSearch.trim().toLowerCase();
+            return !search
+                || group.name.toLowerCase().includes(search)
+                || (group.description || "").toLowerCase().includes(search);
+        })
+        .sort((a, b) => {
+            if (groupSort === "name") return a.name.localeCompare(b.name);
+            if (groupSort === "amount") return (b.expenseTotals?.total || 0) - (a.expenseTotals?.total || 0);
+            return 0;
+        });
+
     if (loading) {
         return (
             <div className="container">
@@ -226,25 +242,37 @@ const Dashboard = () => {
     return (
         <section className="container dashboard-container animate-fade-in">
             <header className="dashboard-header">
-                <h1>Dashboard</h1>
-                <p className="lead">
-                    <i className="fas fa-user-circle"></i> Welcome {user && user.name}
-                </p>
+                <div>
+                    <span className="dashboard-eyebrow">Your shared expenses</span>
+                    <h1>Welcome back, {user && user.name?.split(" ")[0]}</h1>
+                    <p className="lead">See what is happening across your groups.</p>
+                </div>
+                <div className="dashboard-header-actions">
+                    <Link to="/groups/create" className="btn btn-primary">
+                        <i className="fas fa-plus"></i> New group
+                    </Link>
+                    <Link to="/profile" className="dashboard-profile-link">
+                        <i className="fas fa-user-circle"></i> Profile
+                    </Link>
+                </div>
                 {error && <div className="alert alert-danger">{error}</div>}
             </header>
 
             <div className="dashboard-summary" aria-label="Expense summary">
                 <div className="summary-card">
-                    <span>Total tracked</span>
+                    <span><i className="fas fa-wallet"></i> Total tracked</span>
                     <strong>₹{summary.total.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
+                    <small>Across {groups.length} group{groups.length === 1 ? "" : "s"}</small>
                 </div>
                 <div className="summary-card summary-card-accent">
-                    <span>Your share</span>
+                    <span><i className="fas fa-chart-pie"></i> Your share</span>
                     <strong>₹{summary.share.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
+                    <small>What you are responsible for</small>
                 </div>
                 <div className="summary-card summary-card-amber">
-                    <span>You paid</span>
+                    <span><i className="fas fa-arrow-up"></i> You paid</span>
                     <strong>₹{summary.paid.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
+                    <small>{summary.paid >= summary.share ? "You are ahead" : "You may owe your groups"}</small>
                 </div>
             </div>
 
@@ -323,16 +351,14 @@ const Dashboard = () => {
                 </div>
             )}
 
-            <div className="dashboard-actions animate-slide-up">
-                <Link to="/groups/create" className="btn btn-primary">
-                    <i className="fas fa-plus-circle"></i> Create New Group
-                </Link>
-            </div>
-
             <div className="groups-section animate-slide-up">
-                <h2 className="section-title">
-                    <i className="fas fa-users mr-2"></i> Your Groups
-                </h2>
+                <div className="groups-heading">
+                    <div>
+                        <span className="dashboard-eyebrow">Your workspace</span>
+                        <h2 className="section-title"><i className="fas fa-users mr-2"></i> Your Groups</h2>
+                    </div>
+                    <span className="group-count">{groups.length} total</span>
+                </div>
 
                 {groups.length === 0 ? (
                     <p className="text-center">
@@ -340,11 +366,44 @@ const Dashboard = () => {
                         You haven't joined any groups yet. Create one to get started!
                     </p>
                 ) : (
-                    <div className="groups">
-                        {groups.map((group) => (
+                    <>
+                        <div className="groups-toolbar">
+                            <label className="group-search">
+                                <i className="fas fa-search"></i>
+                                <input
+                                    type="search"
+                                    value={groupSearch}
+                                    onChange={(event) => setGroupSearch(event.target.value)}
+                                    placeholder="Search groups"
+                                    aria-label="Search groups"
+                                />
+                            </label>
+                            <div className="groups-toolbar-actions">
+                                <select value={groupSort} onChange={(event) => setGroupSort(event.target.value)} aria-label="Sort groups">
+                                    <option value="recent">Recently added</option>
+                                    <option value="name">Name</option>
+                                    <option value="amount">Highest spend</option>
+                                </select>
+                                <div className="view-toggle" aria-label="Group view">
+                                    <button className={groupView === "grid" ? "active" : ""} onClick={() => setGroupView("grid")} aria-label="Grid view">
+                                        <i className="fas fa-th-large"></i>
+                                    </button>
+                                    <button className={groupView === "list" ? "active" : ""} onClick={() => setGroupView("list")} aria-label="List view">
+                                        <i className="fas fa-list"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={`groups groups-${groupView}`}>
+                        {filteredGroups.length === 0 ? (
+                            <p className="groups-empty">No groups match “{groupSearch}”. Try another search.</p>
+                        ) : filteredGroups.map((group) => (
                             <div key={group._id} className="group">
                                 <div className="group-details">
-                                    <h2>{group.name}</h2>
+                                    <div className="group-title-row">
+                                        <span className="group-avatar">{group.name.charAt(0).toUpperCase()}</span>
+                                        <h2>{group.name}</h2>
+                                    </div>
                                     <p>{group.description || "No description provided"}</p>
                                     <div className="group-stats">
                                         <span className="badge badge-primary">
@@ -354,6 +413,9 @@ const Dashboard = () => {
                                         <span className="badge badge-success">
                                             ₹{group.expenseTotals?.total.toLocaleString("en-IN", { maximumFractionDigits: 2 }) || "0.00"} Tracked
                                         </span>
+                                    </div>
+                                    <div className="group-progress" aria-label={`${group.expenseTotals?.total || 0} tracked`}>
+                                        <span style={{ width: `${summary.total ? Math.min((group.expenseTotals?.total || 0) / summary.total * 100, 100) : 0}%` }} />
                                     </div>
                                 </div>
                                 <div className="group-actions">
@@ -374,7 +436,8 @@ const Dashboard = () => {
                                 </div>
                             </div>
                         ))}
-                    </div>
+                        </div>
+                    </>
                 )}
             </div>
         </section>
