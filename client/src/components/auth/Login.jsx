@@ -1,10 +1,10 @@
 import { useState, useContext } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
 import './Login.css';
 
-const Login = () => {
+const Login = ({ onSwitchMode }) => {
     const { isAuthenticated, setUser, setIsAuthenticated } = useContext(AuthContext);
 
     const [formData, setFormData] = useState({
@@ -65,7 +65,7 @@ const Login = () => {
     }
 
     return (
-        <section className="container">
+        <div className="container">
             <h1>Sign In</h1>
             <p>Sign Into Your Account</p>
 
@@ -121,9 +121,9 @@ const Login = () => {
                 <input type="submit" className="btn btn-primary" value="Login" />
             </form>
             <p className="my-1">
-                Don't have an account? <Link to="/register">Sign Up</Link>
+                Don't have an account? <button type="button" className="auth-switch" onClick={onSwitchMode}>Sign Up</button>
             </p>
-        </section>
+        </div>
     );
 };
 

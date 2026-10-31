@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { unparse } from 'papaparse';
@@ -24,6 +24,20 @@ const GroupDetail = () => {
     const [inviteMethod, setInviteMethod] = useState('email');
     const [qrModalOpen, setQrModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const memberTotals = useMemo(() => {
+        const totals = {};
+        expenses.forEach((expense) => {
+            const payerId = String(expense.paidBy.user);
+            totals[payerId] = totals[payerId] || { paid: 0, share: 0 };
+            totals[payerId].paid += Number(expense.amount || 0);
+            expense.splitAmong.forEach((split) => {
+                const memberId = String(split.user);
+                totals[memberId] = totals[memberId] || { paid: 0, share: 0 };
+                totals[memberId].share += Number(split.amount || 0);
+            });
+        });
+        return totals;
+    }, [expenses]);
 
     // Fetch group details and expenses
     useEffect(() => {
@@ -474,10 +488,10 @@ const GroupDetail = () => {
             <Link to={`/expenses/add/${id}`} className="btn btn-primary">
                 <i className="fas fa-plus-circle"></i> Add Expense
             </Link>
-            <Link to={`/expenses/settlement/${id}`} className="btn btn-success">
+            <Link to={`/expenses/settlement/${id}`} className="btn btn-success group-tab">
                 <i className="fas fa-exchange-alt"></i> View Settlement Plan
             </Link>
-            <Link to={`/expenses/analysis/${id}`} className="btn btn-info">
+            <Link to={`/expenses/analysis/${id}`} className="btn btn-info group-tab">
                 <i className="fas fa-chart-pie"></i> View Expense Analysis
             </Link>
             <button className="btn btn-light" onClick={handleExportCSV} disabled={expenses.length === 0}>
@@ -495,6 +509,7 @@ const GroupDetail = () => {
             <MemberList
                 group={group}
                 user={user}
+                memberTotals={memberTotals}
                 inviteMethod={inviteMethod}
                 newMemberEmail={newMemberEmail}
                 newMemberPhone={newMemberPhone}

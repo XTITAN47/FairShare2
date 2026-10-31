@@ -9,12 +9,12 @@
 .App {
   min-height: 100vh;
   width: 100%;
-  background-color: #1a2530;
-  color: #f8f9fa;
+  background-color: var(--color-bg-base);
+  color: var(--color-text);
 }
 
 .container {
-  background-color: #2c3e50;
+  background-color: var(--color-surface);
   border-radius: var(--border-radius);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   padding: 1.5rem;
@@ -54,7 +54,7 @@
   padding: 2em;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-sm);
-  background-color: #34495e;
+  background-color: var(--color-surface);
   transition: var(--transition);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -62,7 +62,7 @@
 .card:hover {
   box-shadow: var(--shadow);
   transform: translateY(-2px);
-  background-color: #3a546b;
+  background-color: #203241;
 }
 
 .read-the-docs {

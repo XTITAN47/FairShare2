@@ -1,6 +1,7 @@
 const MemberList = ({
     group,
     user,
+    memberTotals,
     inviteMethod,
     newMemberEmail,
     newMemberPhone,
@@ -21,6 +22,13 @@ const MemberList = ({
                         <div className="member-contact">
                             <span className="member-email">{member.email}</span>
                             {member.phone && <span className="member-phone">{member.phone}</span>}
+                        </div>
+                        <div className="member-financials">
+                            <span>Paid ₹{(memberTotals[String(member.user)]?.paid || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+                            <span>Share ₹{(memberTotals[String(member.user)]?.share || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+                            <strong className={(memberTotals[String(member.user)]?.paid || 0) - (memberTotals[String(member.user)]?.share || 0) >= 0 ? 'positive' : 'negative'}>
+                                Balance ₹{((memberTotals[String(member.user)]?.paid || 0) - (memberTotals[String(member.user)]?.share || 0)).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                            </strong>
                         </div>
                         {member.user === group.createdBy && <span className="owner-badge">Group Owner</span>}
                     </div>

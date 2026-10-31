@@ -1,10 +1,10 @@
 import { useState, useContext } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
 import './Register.css';
 
-const Register = () => {
+const Register = ({ onSwitchMode }) => {
     const { isAuthenticated, setUser, setIsAuthenticated } = useContext(AuthContext);
 
     const [formData, setFormData] = useState({
@@ -64,7 +64,7 @@ const Register = () => {
     }
 
     return (
-        <section className="container">
+        <div className="container">
             <h1>Sign Up</h1>
             <p>Create Your Account</p>
 
@@ -125,9 +125,9 @@ const Register = () => {
                 <input type="submit" className="btn btn-primary" value="Register" />
             </form>
             <p className="my-1">
-                Already have an account? <Link to="/login">Sign In</Link>
+                Already have an account? <button type="button" className="auth-switch" onClick={onSwitchMode}>Sign In</button>
             </p>
-        </section>
+        </div>
     );
 };
 

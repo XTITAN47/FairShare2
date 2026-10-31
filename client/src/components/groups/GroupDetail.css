@@ -198,6 +198,23 @@ section.container {
   width: 100%;
 }
 
+.member-financials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  margin-top: 0.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.72rem;
+}
+
+.member-financials strong.positive {
+  color: var(--money-receive);
+}
+
+.member-financials strong.negative {
+  color: var(--money-owed);
+}
+
 .member-email,
 .member-phone {
   display: flex;
@@ -940,6 +957,12 @@ section.container {
   transition: all 0.2s ease;
   text-decoration: none;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.group-tab {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: none;
 }
 
 .btn i {

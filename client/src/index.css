@@ -1,23 +1,26 @@
 :root {
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
-  --color-bg-base: #f9fafb;
-  --color-surface: #ffffff;
-  --color-border: #e5e7eb;
+  --color-primary: #3ddc97;
+  --color-primary-hover: #2abb7d;
+  --color-bg-base: #0f1923;
+  --color-surface: #17232f;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-amber: #f5a65b;
+  --color-text: #f5f7f8;
+  --color-text-muted: #aab8c2;
   --radius-sm: 6px;
   --radius-md: 10px;
-  --primary-color: #16a085;
-  --primary-dark: #138a72;
-  --primary-light: #e8f8f5;
-  --secondary-color: #2ecc71;
-  --secondary-dark: #27ae60;
+  --primary-color: #3ddc97;
+  --primary-dark: #2abb7d;
+  --primary-light: rgba(61, 220, 151, 0.14);
+  --secondary-color: #3ddc97;
+  --secondary-dark: #2abb7d;
   --secondary-light: #eafaf1;
-  --dark-color: #2c3e50;
+  --dark-color: #17232f;
   --light-color: #f8f9fa;
   --danger-color: #e74c3c;
   --danger-light: #fdedec;
-  --warning-color: #f39c12;
-  --success-color: #2ecc71;
+  --warning-color: #f5a65b;
+  --success-color: #3ddc97;
   --success-light: #e8f8f5;
   --info-color: #3498db;
   --muted-color: #bdc3c7;
@@ -31,6 +34,10 @@
   --transition: all 0.3s ease;
 }
 
+.profile-dropdown {
+  right: -0.5rem;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -40,17 +47,17 @@
 html {
   min-width: 320px;
   min-height: 100%;
-  background: #1a2530;
+  background: var(--color-bg-base);
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
   font-size: 1rem;
   line-height: 1.6;
-  background-color: #1a2530;
-  color: #f8f9fa;
+  background-color: var(--color-bg-base);
+  color: var(--color-text);
   padding-top: 70px;
   min-width: 320px;
   min-height: 100vh;
@@ -127,8 +134,8 @@ img {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background: var(--light-color);
-  color: var(--dark-color);
+  background: var(--color-surface);
+  color: var(--color-text);
   padding: 0.6rem 1.3rem;
   font-size: 0.95rem;
   border: none;
@@ -136,26 +143,26 @@ img {
   margin-right: 0.5rem;
   transition: var(--transition);
   outline: none;
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-md);
   font-weight: 500;
   box-shadow: var(--shadow-sm);
 }
 
 .btn-primary {
-  background: var(--primary-color);
+  background: var(--color-primary);
   color: #fff;
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-dark);
+  background-color: var(--color-primary-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow);
 }
 
 .btn-light {
-  background: var(--light-color);
-  color: var(--dark-color);
-  border: 1px solid var(--border-color);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
 }
 
 .btn-light:hover {
@@ -268,7 +275,7 @@ textarea {
   font-size: 1rem;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  background-color: #273746;
+  background-color: var(--color-surface);
   color: var(--light-color);
   transition: var(--transition);
 }
@@ -353,11 +360,12 @@ button,
   background-color: #0f1923; /* Darker background for better contrast */
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   z-index: 100;
-  height: 70px;
+  height: 58px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+  will-change: transform, background-color;
 }
 
 .navbar-landing {
@@ -371,19 +379,49 @@ button,
   border-bottom: none;
 }
 
+.navbar-scrolled {
+  background-color: rgba(15, 25, 35, 0.96);
+  border-bottom-color: rgba(61, 220, 151, 0.16);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.24);
+}
+
+.navbar-scrolled .navbar-container {
+  transform: scale(0.97);
+  transform-origin: center;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.has-landing-page .navbar.navbar-scrolled {
+  background-color: rgba(15, 25, 35, 0.96);
+}
+
+.navbar-scroll-down {
+  transform: translate3d(0, -2px, 0);
+}
+
+.navbar-scroll-up {
+  transform: translate3d(0, 0, 0);
+}
+
 .navbar-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2rem; /* Adjust gap as needed */
+  gap: 1.5rem;
   width: 100%;
+  max-width: none;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
+  overflow: visible;
+}
+
+.navbar .navbar-container {
+  width: 100%;
 }
 
 .navbar h1 {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 1.35rem;
   font-weight: 700;
 }
 
@@ -446,6 +484,22 @@ button,
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
 }
 
+.fairshare-logo {
+  display: block;
+  width: 2.2rem;
+  height: 2.2rem;
+  flex: 0 0 auto;
+  margin-right: 0.5rem;
+}
+
+.landing-mark {
+  width: 4.5rem;
+  height: 4.5rem;
+  margin-right: 1.2rem;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.2));
+}
+
 .navbar-landing .brand i {
   font-size: 3.4rem; /* Slightly larger on landing page */
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
@@ -459,13 +513,13 @@ button,
 .navbar .brand-text {
   font-weight: 700;
   letter-spacing: -0.5px;
-  font-size: 2rem; /* 2x larger than original */
+  font-size: 1.35rem;
   color: #ffffff; /* Ensuring white color for visibility */
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Text shadow for better contrast */
 }
 
 .navbar-landing .brand-text {
-  font-size: 2.2rem;
+  font-size: 1.45rem;
 }
 
 .navbar .brand-highlight {
@@ -479,10 +533,10 @@ button,
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-/* Only make "Share" black on landing page */
+/* Keep the brand readable against the persistent dark landing background. */
 .navbar-landing .brand-text span:not(.brand-highlight) {
-  color: #000000;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .navbar-landing .brand-highlight::after {
@@ -633,13 +687,13 @@ button,
 
 /* Add new card styles */
 .card {
-  background: #34495e;
+  background: var(--color-surface);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-sm);
   transition: var(--transition);
   overflow: hidden;
   height: 100%;
-  color: #f8f9fa;
+  color: var(--color-text);
 }
 
 .card:hover {
@@ -804,12 +858,12 @@ button,
   }
 
   .navbar {
-    height: 60px;
+    height: 54px;
   }
 
   .navbar-container {
     gap: 0.5rem;
-    padding: 0.35rem 0.75rem;
+    padding: 0.25rem 0.75rem;
   }
 
   .navbar h1 {
@@ -823,13 +877,25 @@ button,
 
   .navbar .brand i,
   .navbar-landing .brand i {
-    font-size: 1.75rem;
+    font-size: 1.4rem;
     margin-right: 0.35rem;
+  }
+
+  .navbar .fairshare-logo {
+    width: 1.7rem;
+    height: 1.7rem;
+    margin-right: 0.35rem;
+  }
+
+  .landing-mark {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-right: 0.65rem;
   }
 
   .navbar .brand-text,
   .navbar-landing .brand-text {
-    font-size: 1.35rem;
+    font-size: 1.1rem;
     letter-spacing: -0.75px;
   }
 
@@ -848,7 +914,7 @@ button,
   }
 
   .navbar a {
-    min-height: 2.75rem;
+    min-height: 2.35rem;
     margin: 0;
     padding: 0.35rem;
     gap: 0.25rem;
@@ -916,21 +982,48 @@ button,
   background-color: transparent;
   box-shadow: none;
   border-bottom: none;
-  height: 56px;
+  height: 52px;
   padding: 0;
 }
 
 .has-landing-page .navbar-container {
-  padding: 0.7rem 2rem;
+  padding: 0.35rem 1.5rem;
 }
 
 .has-landing-page .navbar .brand {
   color: #fff;
-  padding: 0 1rem;
+  padding: 0 0.5rem;
 }
 
 .has-landing-page .navbar .brand:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.has-landing-page {
+  padding-top: 0;
+}
+
+.has-landing-page .navbar-landing a {
+  color: #a9b8c7;
+  font-weight: 600;
+}
+
+.has-landing-page .navbar-landing a:hover {
+  color: #fff;
+  background-color: #1d2c3b;
+}
+
+.has-landing-page .navbar-landing .signup-btn {
+  padding: 0.75rem 1.375rem;
+  border-radius: 0.75rem;
+  background: var(--color-primary);
+  color: #06281a !important;
+  font-weight: 800;
+}
+
+.has-landing-page .navbar-landing .signup-btn:hover {
+  background: var(--color-primary-hover);
+  color: #06281a !important;
 }
 
 .has-landing-page .navbar .brand i {
@@ -976,6 +1069,81 @@ button,
   padding: 0.4rem 0.8rem !important;
   border-radius: var(--border-radius);
   transition: all 0.3s ease;
+}
+
+.profile-trigger {
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.profile-chevron {
+  margin-left: 0.15rem;
+  font-size: 0.7rem !important;
+  transition: transform 0.2s ease;
+}
+
+.profile-trigger[aria-expanded="true"] .profile-chevron {
+  transform: rotate(180deg);
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  z-index: 20;
+  display: grid;
+  min-width: 220px;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.profile-dropdown-heading {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.profile-dropdown-heading strong {
+  color: var(--color-text);
+}
+
+.profile-dropdown-heading span {
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-dropdown a,
+.profile-dropdown > button {
+  width: 100%;
+  margin: 0;
+  padding: 0.7rem 0.75rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.profile-dropdown a:hover,
+.profile-dropdown > button:hover {
+  background: rgba(61, 220, 151, 0.1);
+  color: var(--color-primary);
+}
+
+.profile-dropdown i {
+  width: 1.25rem;
 }
 
 .profile-link span {

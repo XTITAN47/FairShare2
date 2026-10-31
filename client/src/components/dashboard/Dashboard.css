@@ -171,6 +171,44 @@
   overflow: hidden;
 }
 
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.summary-card {
+  display: grid;
+  gap: 0.4rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(61, 220, 151, 0.25);
+  border-radius: var(--border-radius);
+  background: var(--dark-blue-1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+}
+
+.summary-card span {
+  color: var(--dashboard-text-muted);
+  font-size: 0.85rem;
+}
+
+.summary-card strong {
+  color: var(--dashboard-text);
+  font-size: 1.65rem;
+}
+
+.summary-card-accent {
+  border-color: rgba(52, 152, 219, 0.35);
+}
+
+.summary-card-amber {
+  border-color: rgba(245, 166, 91, 0.4);
+}
+
+.summary-card-amber strong {
+  color: var(--color-amber);
+}
+
 .dashboard-actions::before {
   content: "";
   position: absolute;
@@ -462,6 +500,10 @@
   .groups-section,
   .invitations-section {
     padding: 1rem;
+  }
+
+  .dashboard-summary {
+    grid-template-columns: 1fr;
   }
 
   .dashboard-header h1 {

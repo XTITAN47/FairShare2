@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "../../context/AuthContext";
@@ -9,19 +9,42 @@ import "./Dashboard.css";
 const Dashboard = () => {
     const { user, socket } = useContext(AuthContext);
     const [groups, setGroups] = useState([]);
+    const [summary, setSummary] = useState({ total: 0, share: 0, paid: 0 });
     const [invitations, setInvitations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [showQRCodeNotification, setShowQRCodeNotification] = useState(false);
     const [qrModalOpen, setQRModalOpen] = useState(false);
 
+    const fetchGroupsWithTotals = useCallback(async () => {
+        const groupsRes = await axios.get("/groups");
+        const enrichedGroups = await Promise.all(groupsRes.data.map(async (group) => {
+            const expensesRes = await axios.get(`/expenses/group/${group._id}`);
+            const totals = expensesRes.data.reduce((accumulator, expense) => {
+                const mySplit = expense.splitAmong.find((split) => split.user === user?._id);
+                return {
+                    total: accumulator.total + Number(expense.amount || 0),
+                    share: accumulator.share + Number(mySplit?.amount || 0),
+                    paid: accumulator.paid + (expense.paidBy.user === user?._id ? Number(expense.amount || 0) : 0)
+                };
+            }, { total: 0, share: 0, paid: 0 });
+            return { ...group, expenseTotals: totals };
+        }));
+
+        setGroups(enrichedGroups);
+        setSummary(enrichedGroups.reduce((accumulator, group) => ({
+            total: accumulator.total + group.expenseTotals.total,
+            share: accumulator.share + group.expenseTotals.share,
+            paid: accumulator.paid + group.expenseTotals.paid
+        }), { total: 0, share: 0, paid: 0 }));
+    }, [user?._id]);
+
     // Fetch user's groups and invitations
     useEffect(() => {
         const fetchData = async () => {
             try {
                 // Fetch groups
-                const groupsRes = await axios.get("/groups");
-                setGroups(groupsRes.data);
+                await fetchGroupsWithTotals();
 
                 // Fetch pending invitations
                 const invitationsRes = await axios.get("/groups/invitations/pending");
@@ -36,7 +59,7 @@ const Dashboard = () => {
         };
 
         fetchData();
-    }, []); // Listen for real-time updates
+    }, [fetchGroupsWithTotals]); // Listen for real-time updates
     useEffect(() => {
         if (socket && user) {
             // Listen for new expense notifications
@@ -75,9 +98,7 @@ const Dashboard = () => {
             socket.on("member_added", (data) => {
                 console.log("Member added event received:", data);
                 // Refresh the groups list for everyone to see updates
-                axios
-                    .get("/groups")
-                    .then((res) => setGroups(res.data))
+                fetchGroupsWithTotals()
                     .catch((err) => console.error("Error fetching groups:", err));
             });
 
@@ -90,9 +111,7 @@ const Dashboard = () => {
                     .catch((err) => console.error("Error fetching invitations:", err));
 
                 // Refresh groups
-                axios
-                    .get("/groups")
-                    .then((response) => setGroups(response.data))
+                fetchGroupsWithTotals()
                     .catch((err) => console.error("Error fetching groups:", err));
             }, 15000); // Refresh every 15 seconds
 
@@ -117,7 +136,7 @@ const Dashboard = () => {
                 socket.off("member_added");
             }
         };
-    }, [socket, user]);
+    }, [fetchGroupsWithTotals, socket, user]);
     const handleDeleteGroup = async (groupId) => {
         try {
             if (
@@ -154,8 +173,7 @@ const Dashboard = () => {
             // If accepted, add the group to the groups list
             if (response === "accept") {
                 // Fetch the updated group list
-                const groupsRes = await axios.get("/groups");
-                setGroups(groupsRes.data);
+                await fetchGroupsWithTotals();
             }
 
             // Emit socket event for real-time update
@@ -214,6 +232,21 @@ const Dashboard = () => {
                 </p>
                 {error && <div className="alert alert-danger">{error}</div>}
             </header>
+
+            <div className="dashboard-summary" aria-label="Expense summary">
+                <div className="summary-card">
+                    <span>Total tracked</span>
+                    <strong>₹{summary.total.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
+                </div>
+                <div className="summary-card summary-card-accent">
+                    <span>Your share</span>
+                    <strong>₹{summary.share.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
+                </div>
+                <div className="summary-card summary-card-amber">
+                    <span>You paid</span>
+                    <strong>₹{summary.paid.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
+                </div>
+            </div>
 
             {/* QR Code Notification */}
             {showQRCodeNotification && (
@@ -317,6 +350,9 @@ const Dashboard = () => {
                                         <span className="badge badge-primary">
                                             <i className="fas fa-users mr-1"></i>{" "}
                                             {group.members.length} Members
+                                        </span>
+                                        <span className="badge badge-success">
+                                            ₹{group.expenseTotals?.total.toLocaleString("en-IN", { maximumFractionDigits: 2 }) || "0.00"} Tracked
                                         </span>
                                     </div>
                                 </div>

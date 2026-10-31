@@ -6,8 +6,7 @@ import { io } from 'socket.io-client';
 // Components
 import Navbar from './components/layout/Navbar';
 import Landing from './components/layout/Landing';
-import Register from './components/auth/Register';
-import Login from './components/auth/Login';
+import AuthPage from './components/auth/AuthPage';
 import Profile from './components/auth/Profile';
 import Dashboard from './components/dashboard/Dashboard';
 import GroupDetail from './components/groups/GroupDetail';
@@ -146,8 +145,8 @@ function App() {
           <NotificationManager />
           <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<AuthPage />} />
+            <Route path="/login" element={<AuthPage />} />
             <Route path="/profile" element={
               <PrivateRoute>
                 <Profile />

@@ -1,0 +1,148 @@
+.auth-page {
+  min-height: calc(100dvh - 52px);
+  padding: 1.5rem;
+  overflow: hidden;
+  background: var(--color-bg-base);
+}
+
+.auth-shell {
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+  min-height: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid #263648;
+  border-radius: 1rem;
+  background: var(--color-surface);
+}
+
+.auth-brand {
+  display: flex;
+  flex: 1 1 300px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2.5rem;
+  background: #1d2c3b;
+}
+
+.auth-brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--color-text);
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.auth-brand-logo .fairshare-logo {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.auth-brand-logo span span {
+  color: var(--color-primary);
+}
+
+.auth-brand h1 {
+  font-size: 1.875rem;
+  line-height: 1.15;
+  font-weight: 800;
+}
+
+.auth-brand p {
+  max-width: 250px;
+  margin-top: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.auth-form {
+  flex: 1 1 380px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.auth-track {
+  display: flex;
+  width: 200%;
+  min-height: 600px;
+  transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.auth-track-login {
+  transform: translateX(0);
+}
+
+.auth-track-register {
+  transform: translateX(-50%);
+}
+
+.auth-pane {
+  width: 50%;
+  min-width: 50%;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.auth-pane > .container {
+  width: min(100%, 520px);
+  margin: 0;
+  padding: 2.5rem;
+  background: transparent;
+  box-shadow: none;
+}
+
+.auth-pane h1 {
+  color: var(--color-text);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  letter-spacing: -0.05em;
+}
+
+.auth-pane > .container > p {
+  color: var(--color-text-muted);
+}
+
+.auth-switch {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+  .auth-page {
+    min-height: calc(100dvh - 52px);
+    padding: 1rem 0 2rem;
+  }
+
+  .auth-shell {
+    display: block;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .auth-brand {
+    min-height: 260px;
+    padding: 1.5rem;
+  }
+
+  .auth-track {
+    min-height: 0;
+  }
+
+  .auth-pane {
+    padding: 0.5rem;
+  }
+
+  .auth-pane > .container {
+    padding: 1.5rem 1rem;
+    border-radius: 16px;
+  }
+}
