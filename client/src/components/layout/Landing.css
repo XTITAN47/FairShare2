@@ -565,7 +565,7 @@
     flex-direction: column;
     gap: 4rem;
     min-height: 100vh;
-    padding: 5rem 1.25rem 2.5rem;
+    padding: 6.5rem 1.25rem 2.5rem;
     background: var(--color-bg-base);
     color: var(--color-text);
   }
@@ -830,11 +830,30 @@
   @media (max-width: 600px) {
     .landing {
       gap: 3rem;
-      padding: 4.25rem 1rem 2rem;
+      padding: 5.5rem 1rem 2rem;
     }
 
     .landing-hero {
       padding-top: 1rem;
+    }
+
+    .landing-hero h1 {
+      max-width: 100%;
+      font-size: clamp(2rem, 9.5vw, 2.75rem);
+      line-height: 1.08;
+    }
+
+    .landing-description {
+      max-width: 34rem;
+      font-size: 1rem;
+    }
+
+    .landing-actions {
+      width: 100%;
+    }
+
+    .landing-actions .landing-button {
+      flex: 1 1 9rem;
     }
 
     .story-sticky {
@@ -880,6 +899,29 @@
 }
 
 @media (max-width: 480px) {
+  .landing {
+    padding-right: 0.875rem;
+    padding-left: 0.875rem;
+  }
+
+  .landing-hero h1 {
+    font-size: clamp(1.875rem, 9.5vw, 2.35rem);
+  }
+
+  .headline-word {
+    min-width: 0;
+  }
+
+  .landing-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .landing-actions .landing-button {
+    width: 100%;
+    flex-basis: auto;
+  }
+
   .landing-logo i {
     font-size: 2.5rem;
   }

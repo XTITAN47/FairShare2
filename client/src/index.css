@@ -949,7 +949,7 @@ button,
 @media (max-width: 420px) {
   .navbar .brand-text,
   .navbar-landing .brand-text {
-    font-size: 1.15rem;
+    font-size: 1rem;
   }
 
   .navbar-links {
@@ -960,6 +960,44 @@ button,
   .navbar .signup-btn {
     padding-left: 0.25rem;
     padding-right: 0.25rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar-container {
+    gap: 0.35rem;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+  }
+
+  .navbar-landing .navbar-links {
+    flex: 0 1 auto;
+  }
+
+  .navbar-landing .navbar-links > ul {
+    gap: 0.5rem;
+  }
+
+  .navbar-landing .navbar-links > ul > li:nth-child(-n + 2) {
+    display: none;
+  }
+
+  .navbar .login-btn,
+  .navbar .signup-btn {
+    font-size: 0.72rem;
+    min-height: 2rem;
+    margin: 0;
+    padding: 0.3rem 0.5rem;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 420px) {
+  .navbar .login-btn,
+  .navbar .signup-btn {
+    font-size: 0.65rem;
+    min-height: 1.8rem;
+    padding: 0.25rem 0.4rem;
   }
 }
 
