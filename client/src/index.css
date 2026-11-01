@@ -1009,6 +1009,318 @@ button,
   }
 }
 
+/* Reference UI treatment for authenticated screens */
+.has-app-sidebar .app-main > .container,
+.has-app-sidebar .app-main > section.container {
+  width: min(100% - 3rem, 1040px);
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-text);
+}
+
+.has-app-sidebar .app-main .group-header,
+.has-app-sidebar .app-main .analysis-summary,
+.has-app-sidebar .app-main .analysis-details,
+.has-app-sidebar .app-main .chart-wrapper,
+.has-app-sidebar .app-main .expense-form,
+.has-app-sidebar .app-main .settlement-content,
+.has-app-sidebar .app-main .group-content,
+.has-app-sidebar .app-main .members-section,
+.has-app-sidebar .app-main .expenses-section,
+.has-app-sidebar .app-main .settlement-section,
+.has-app-sidebar .app-main .pending-invitations,
+.has-app-sidebar .app-main .invite-member-form {
+  border: 1px solid #263648;
+  border-radius: 1rem;
+  background: #17232f;
+  box-shadow: none;
+  color: var(--color-text);
+}
+
+.has-app-sidebar .app-main .group-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: #1d2c3b;
+}
+
+.has-app-sidebar .app-main .group-header h1,
+.has-app-sidebar .app-main .group-header p,
+.has-app-sidebar .app-main .group-header h2,
+.has-app-sidebar .app-main .group-header h3 {
+  color: var(--color-text);
+  text-shadow: none;
+}
+
+.has-app-sidebar .app-main .group-header p,
+.has-app-sidebar .app-main .analysis-summary p,
+.has-app-sidebar .app-main .settlement-explanation,
+.has-app-sidebar .app-main .graph-explanation,
+.has-app-sidebar .app-main .graph-instructions {
+  color: var(--color-text-muted);
+}
+
+.has-app-sidebar .app-main .group-content,
+.has-app-sidebar .app-main .settlement-content,
+.has-app-sidebar .app-main .analysis-content {
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.has-app-sidebar .app-main .members-section,
+.has-app-sidebar .app-main .expenses-section,
+.has-app-sidebar .app-main .settlement-section,
+.has-app-sidebar .app-main .analysis-summary,
+.has-app-sidebar .app-main .analysis-details,
+.has-app-sidebar .app-main .chart-wrapper,
+.has-app-sidebar .app-main .expense-form,
+.has-app-sidebar .app-main .invite-member-form,
+.has-app-sidebar .app-main .pending-invitations {
+  padding: 1.25rem;
+}
+
+.has-app-sidebar .app-main .member-item,
+.has-app-sidebar .app-main .expense-item,
+.has-app-sidebar .app-main .settlement-item,
+.has-app-sidebar .app-main .split-item,
+.has-app-sidebar .app-main .distribution-table {
+  border: 1px solid #263648;
+  border-radius: 0.75rem;
+  background: #0f1923;
+  box-shadow: none;
+}
+
+.has-app-sidebar .app-main .member-item:hover,
+.has-app-sidebar .app-main .expense-item:hover,
+.has-app-sidebar .app-main .settlement-item:hover,
+.has-app-sidebar .app-main .split-item:hover {
+  background: #1d2c3b;
+  transform: none;
+}
+
+.has-app-sidebar .app-main h1,
+.has-app-sidebar .app-main h2,
+.has-app-sidebar .app-main h3,
+.has-app-sidebar .app-main h4 {
+  color: var(--color-text);
+}
+
+.has-app-sidebar .app-main label,
+.has-app-sidebar .app-main .form-label,
+.has-app-sidebar .app-main .member-contact,
+.has-app-sidebar .app-main .expense-details,
+.has-app-sidebar .app-main .expense-splits,
+.has-app-sidebar .app-main .settlement-explanation {
+  color: var(--color-text-muted);
+}
+
+.has-app-sidebar .app-main input,
+.has-app-sidebar .app-main select,
+.has-app-sidebar .app-main textarea {
+  border: 1px solid #3a4f64;
+  border-radius: 0.75rem;
+  background: #0f1923;
+  color: var(--color-text);
+}
+
+.has-app-sidebar .app-main input:focus,
+.has-app-sidebar .app-main select:focus,
+.has-app-sidebar .app-main textarea:focus {
+  border-color: var(--color-primary);
+  outline: 2px solid rgba(61, 220, 151, 0.2);
+}
+
+.has-app-sidebar .app-main .group-actions,
+.has-app-sidebar .app-main .form-actions,
+.has-app-sidebar .app-main .settlement-actions,
+.has-app-sidebar .app-main .confirmation-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.has-app-sidebar .app-main .group-actions .btn,
+.has-app-sidebar .app-main .form-actions .btn,
+.has-app-sidebar .app-main .settlement-actions .btn {
+  margin: 0;
+}
+
+.has-app-sidebar .app-main .amount-owed,
+.has-app-sidebar .app-main .negative,
+.has-app-sidebar .app-main .expense-amount {
+  color: var(--color-amber);
+}
+
+.has-app-sidebar .app-main .positive,
+.has-app-sidebar .app-main .amount-receive,
+.has-app-sidebar .app-main .receive {
+  color: var(--color-primary);
+}
+
+@media (max-width: 900px) {
+  .has-app-sidebar .app-main > .container,
+  .has-app-sidebar .app-main > section.container {
+    width: 100%;
+    padding: 1rem 1rem 2rem;
+  }
+
+  .has-app-sidebar .app-main .group-header {
+    align-items: flex-start;
+  }
+
+  .has-app-sidebar .app-main .group-actions,
+  .has-app-sidebar .app-main .form-actions,
+  .has-app-sidebar .app-main .settlement-actions {
+    width: 100%;
+  }
+
+  .has-app-sidebar .app-main .group-actions .btn,
+  .has-app-sidebar .app-main .form-actions .btn,
+  .has-app-sidebar .app-main .settlement-actions .btn {
+    flex: 1 1 11rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .has-app-sidebar .app-main > .container,
+  .has-app-sidebar .app-main > section.container {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+  }
+
+  .has-app-sidebar .app-main .members-section,
+  .has-app-sidebar .app-main .expenses-section,
+  .has-app-sidebar .app-main .settlement-section,
+  .has-app-sidebar .app-main .analysis-summary,
+  .has-app-sidebar .app-main .analysis-details,
+  .has-app-sidebar .app-main .chart-wrapper,
+  .has-app-sidebar .app-main .expense-form,
+  .has-app-sidebar .app-main .invite-member-form,
+  .has-app-sidebar .app-main .pending-invitations {
+    padding: 1rem;
+  }
+}
+
+/* Home dashboard uses the compact top navigation shown in the reference. */
+.has-home-dashboard {
+  padding-top: 0;
+}
+
+.navbar.app-sidebar.home-navbar {
+  position: sticky;
+  inset: 0 0 auto;
+  width: 100%;
+  height: 58px;
+  background: #0f1923;
+  border-right: 0;
+  border-bottom: 1px solid #17232f;
+  z-index: 100;
+}
+
+.navbar.app-sidebar.home-navbar .navbar-container {
+  flex-direction: row;
+  align-items: center;
+  width: min(100% - 2rem, 660px);
+  height: 58px;
+  padding: 0;
+}
+
+.navbar.app-sidebar.home-navbar h1 {
+  padding: 0;
+}
+
+.navbar.app-sidebar.home-navbar .brand {
+  gap: 0.25rem;
+  padding: 0;
+  font-size: 0.8rem;
+}
+
+.navbar.app-sidebar.home-navbar .fairshare-logo {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.2rem;
+}
+
+.navbar.app-sidebar.home-navbar .navbar-links {
+  flex: 1;
+  flex-direction: row;
+  justify-content: center;
+  margin-left: 0;
+}
+
+.navbar.app-sidebar.home-navbar .home-nav-links {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.navbar.app-sidebar.home-navbar .home-nav-links a,
+.navbar.app-sidebar.home-navbar .profile-trigger {
+  width: auto;
+  min-height: 1.8rem;
+  margin: 0;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.45rem;
+  color: #a9b8c7;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.navbar.app-sidebar.home-navbar .home-nav-links a:hover,
+.navbar.app-sidebar.home-navbar .home-nav-links .app-nav-active {
+  background: #223447;
+  color: #fff;
+}
+
+.navbar.app-sidebar.home-navbar .home-profile-menu {
+  margin-left: auto;
+}
+
+.navbar.app-sidebar.home-navbar .profile-trigger {
+  padding: 0.15rem;
+}
+
+.navbar.app-sidebar.home-navbar .profile-trigger .profile-chevron,
+.navbar.app-sidebar.home-navbar .profile-trigger span {
+  display: none;
+}
+
+.navbar.app-sidebar.home-navbar .profile-avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 0.65rem;
+}
+
+.navbar.app-sidebar.home-navbar .profile-dropdown {
+  top: 3rem;
+  right: 0;
+  bottom: auto;
+  left: auto;
+  width: 12rem;
+}
+
+@media (max-width: 560px) {
+  .navbar.app-sidebar.home-navbar .navbar-container {
+    width: calc(100% - 1rem);
+  }
+
+  .navbar.app-sidebar.home-navbar .home-nav-links {
+    gap: 0;
+  }
+
+  .navbar.app-sidebar.home-navbar .home-nav-links a {
+    padding-right: 0.35rem;
+    padding-left: 0.35rem;
+    font-size: 0.6rem;
+  }
+}
+
 .logo-icon {
   animation: pulse 2s infinite;
   transform-origin: center;

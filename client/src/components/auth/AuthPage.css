@@ -3,6 +3,7 @@
   padding: 1.5rem;
   overflow: hidden;
   background: var(--color-bg-base);
+  color: var(--color-text);
 }
 
 .auth-shell {
@@ -15,6 +16,7 @@
   border: 1px solid #263648;
   border-radius: 1rem;
   background: var(--color-surface);
+  box-shadow: none;
 }
 
 .auth-brand {
@@ -103,6 +105,26 @@
 
 .auth-pane > .container > p {
   color: var(--color-text-muted);
+}
+
+.auth-pane input {
+  border: 1px solid #3a4f64;
+  border-radius: 0.75rem;
+  background: #0f1923;
+  color: var(--color-text);
+}
+
+.auth-pane input:focus {
+  border-color: var(--color-primary);
+  outline: 2px solid rgba(61, 220, 151, 0.2);
+}
+
+.auth-pane .btn-primary {
+  min-height: 2.75rem;
+  border-radius: 0.75rem;
+  background: var(--color-primary);
+  color: #06281a;
+  font-weight: 800;
 }
 
 .auth-switch {

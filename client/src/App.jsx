@@ -8,7 +8,7 @@ import Navbar from './components/layout/Navbar';
 import Landing from './components/layout/Landing';
 import AuthPage from './components/auth/AuthPage';
 import Profile from './components/auth/Profile';
-import Dashboard from './components/dashboard/Dashboard';
+import Home from './components/home/Home';
 import GroupDetail from './components/groups/GroupDetail';
 import CreateGroup from './components/groups/CreateGroup';
 import AddExpense from './components/expenses/AddExpense';
@@ -155,7 +155,7 @@ function App() {
               } />
               <Route path="/dashboard" element={
                 <PrivateRoute>
-                  <Dashboard />
+                  <Home />
                 </PrivateRoute>
               } />
               <Route path="/groups/create" element={

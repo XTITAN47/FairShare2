@@ -4,9 +4,9 @@ import axios from "axios";
 import AuthContext from "../../context/AuthContext";
 import Loader from "../layout/Loader";
 import QRUploadModal from "../layout/QRUploadModal";
-import "./Dashboard.css";
+import "./Home.css";
 
-const Dashboard = () => {
+const Home = () => {
     const { user, socket } = useContext(AuthContext);
     const [groups, setGroups] = useState([]);
     const [summary, setSummary] = useState({ total: 0, share: 0, paid: 0 });
@@ -240,39 +240,34 @@ const Dashboard = () => {
     }
 
     return (
-        <section className="container dashboard-container animate-fade-in">
+        <section className="container dashboard-container home-dashboard animate-fade-in">
             <header className="dashboard-header">
                 <div>
-                    <span className="dashboard-eyebrow">Your shared expenses</span>
-                    <h1>Welcome back, {user && user.name?.split(" ")[0]}</h1>
-                    <p className="lead">See what is happening across your groups.</p>
+                    <h1>Welcome back</h1>
                 </div>
                 <div className="dashboard-header-actions">
                     <Link to="/groups/create" className="btn btn-primary">
-                        <i className="fas fa-plus"></i> New group
+                        New group
                     </Link>
-                    <Link to="/profile" className="dashboard-profile-link">
-                        <i className="fas fa-user-circle"></i> Profile
-                    </Link>
+                    <button className="btn btn-outline-secondary" onClick={() => setQRModalOpen(true)}>
+                        Join with QR
+                    </button>
                 </div>
                 {error && <div className="alert alert-danger">{error}</div>}
             </header>
 
             <div className="dashboard-summary" aria-label="Expense summary">
                 <div className="summary-card">
-                    <span><i className="fas fa-wallet"></i> Total tracked</span>
-                    <strong>₹{summary.total.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
-                    <small>Across {groups.length} group{groups.length === 1 ? "" : "s"}</small>
+                    <span>You owe</span>
+                    <strong>₹{Math.max(summary.share - summary.paid, 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
                 </div>
                 <div className="summary-card summary-card-accent">
-                    <span><i className="fas fa-chart-pie"></i> Your share</span>
-                    <strong>₹{summary.share.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
-                    <small>What you are responsible for</small>
+                    <span>You're owed</span>
+                    <strong>₹{Math.max(summary.paid - summary.share, 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
                 </div>
                 <div className="summary-card summary-card-amber">
-                    <span><i className="fas fa-arrow-up"></i> You paid</span>
-                    <strong>₹{summary.paid.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
-                    <small>{summary.paid >= summary.share ? "You are ahead" : "You may owe your groups"}</small>
+                    <span>Spent this month</span>
+                    <strong>₹{summary.total.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
                 </div>
             </div>
 
@@ -351,13 +346,11 @@ const Dashboard = () => {
                 </div>
             )}
 
-            <div className="groups-section animate-slide-up">
+            <div className="groups-section home-groups-section animate-slide-up" id="groups">
                 <div className="groups-heading">
                     <div>
-                        <span className="dashboard-eyebrow">Your workspace</span>
-                        <h2 className="section-title"><i className="fas fa-users mr-2"></i> Your Groups</h2>
+                        <h2 className="section-title">Your groups</h2>
                     </div>
-                    <span className="group-count">{groups.length} total</span>
                 </div>
 
                 {groups.length === 0 ? (
@@ -367,7 +360,7 @@ const Dashboard = () => {
                     </p>
                 ) : (
                     <>
-                        <div className="groups-toolbar">
+                        <div className="groups-toolbar home-groups-toolbar">
                             <label className="group-search">
                                 <i className="fas fa-search"></i>
                                 <input
@@ -394,28 +387,20 @@ const Dashboard = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className={`groups groups-${groupView}`}>
+                        <div className="groups home-groups">
                         {filteredGroups.length === 0 ? (
                             <p className="groups-empty">No groups match “{groupSearch}”. Try another search.</p>
                         ) : filteredGroups.map((group) => (
                             <div key={group._id} className="group">
                                 <div className="group-details">
                                     <div className="group-title-row">
-                                        <span className="group-avatar">{group.name.charAt(0).toUpperCase()}</span>
                                         <h2>{group.name}</h2>
+                                        <span className="group-members">{group.members.length} members</span>
                                     </div>
-                                    <p>{group.description || "No description provided"}</p>
-                                    <div className="group-stats">
-                                        <span className="badge badge-primary">
-                                            <i className="fas fa-users mr-1"></i>{" "}
-                                            {group.members.length} Members
-                                        </span>
-                                        <span className="badge badge-success">
-                                            ₹{group.expenseTotals?.total.toLocaleString("en-IN", { maximumFractionDigits: 2 }) || "0.00"} Tracked
-                                        </span>
-                                    </div>
-                                    <div className="group-progress" aria-label={`${group.expenseTotals?.total || 0} tracked`}>
-                                        <span style={{ width: `${summary.total ? Math.min((group.expenseTotals?.total || 0) / summary.total * 100, 100) : 0}%` }} />
+                                    <p className="group-balance">You owe ₹{Math.max((group.expenseTotals?.share || 0) - (group.expenseTotals?.paid || 0), 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</p>
+                                    <div className="group-expenses">
+                                        <span>Expenses tracked</span>
+                                        <strong>₹{(group.expenseTotals?.total || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong>
                                     </div>
                                 </div>
                                 <div className="group-actions">
@@ -437,6 +422,17 @@ const Dashboard = () => {
                             </div>
                         ))}
                         </div>
+                        <div className="home-spending">
+                            <h2>Your spending by group</h2>
+                            {filteredGroups.map((group) => (
+                                <div className="spending-row" key={`spending-${group._id}`}>
+                                    <div><span>{group.name}</span><strong>₹{(group.expenseTotals?.total || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</strong></div>
+                                    <div className="spending-track">
+                                        <span style={{ width: `${summary.total ? Math.min((group.expenseTotals?.total || 0) / summary.total * 100, 100) : 0}%` }} />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </>
                 )}
             </div>
@@ -444,4 +440,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default Home;

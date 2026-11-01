@@ -12,6 +12,7 @@ const Navbar = () => {
     const [scrollDirection, setScrollDirection] = useState('up');
     const [profileOpen, setProfileOpen] = useState(false);
     const profileMenuRef = useRef(null);
+    const isHomePage = location.pathname === '/dashboard';
     
     useEffect(() => {
         setIsLandingPage(location.pathname === '/');
@@ -22,11 +23,13 @@ const Navbar = () => {
     useEffect(() => {
         document.body.classList.toggle('has-app-sidebar', isAuthenticated);
         document.body.classList.toggle('has-auth-page', isAuthPage);
+        document.body.classList.toggle('has-home-dashboard', isAuthenticated && isHomePage);
         return () => {
             document.body.classList.remove('has-app-sidebar');
             document.body.classList.remove('has-auth-page');
+            document.body.classList.remove('has-home-dashboard');
         };
-    }, [isAuthenticated, isAuthPage]);
+    }, [isAuthenticated, isAuthPage, isHomePage]);
 
     useEffect(() => {
         let previousScroll = window.scrollY;
@@ -90,11 +93,43 @@ const Navbar = () => {
         return 'U';
     };
 
-    const authLinks = (
+    const authLinks = isHomePage ? (
+        <ul className="home-nav-links">
+            <li><Link to="/dashboard" className="app-nav-active">Home</Link></li>
+            <li><a href="#groups">Groups</a></li>
+            <li><a href="#groups">Activity</a></li>
+            <li><a href="#groups">Settle up</a></li>
+            <li className="home-profile-menu" ref={profileMenuRef}>
+                <button
+                    type="button"
+                    className="profile-link profile-trigger"
+                    aria-expanded={profileOpen}
+                    aria-haspopup="menu"
+                    onClick={() => setProfileOpen((open) => !open)}
+                >
+                    <div className="profile-avatar">{getUserInitial()}</div>
+                </button>
+                {profileOpen && (
+                    <div className="profile-dropdown" role="menu">
+                        <div className="profile-dropdown-heading">
+                            <strong>{user?.name || 'Your account'}</strong>
+                            <span>{user?.email}</span>
+                        </div>
+                        <Link to="/profile" role="menuitem" onClick={() => setProfileOpen(false)}>
+                            <i className="fas fa-user"></i> Profile
+                        </Link>
+                        <button type="button" role="menuitem" onClick={handleLogout}>
+                            <i className="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                )}
+            </li>
+        </ul>
+    ) : (
         <ul className="app-sidebar-links">
             <li>
                 <Link to="/dashboard" className={location.pathname === '/dashboard' ? 'app-nav-active' : ''}>
-                    <i className="fas fa-th-large"></i> Dashboard
+                    <i className="fas fa-home"></i> Home
                 </Link>
             </li>
             <li>
@@ -170,7 +205,7 @@ const Navbar = () => {
     );
 
     return (
-        <nav className={`navbar ${isAuthenticated ? 'app-sidebar' : ''} ${isLandingPage ? 'navbar-landing' : ''} ${isScrolled ? 'navbar-scrolled' : ''} navbar-scroll-${scrollDirection}`}>
+        <nav className={`navbar ${isAuthenticated ? 'app-sidebar' : ''} ${isHomePage ? 'home-navbar' : ''} ${isLandingPage ? 'navbar-landing' : ''} ${isScrolled ? 'navbar-scrolled' : ''} navbar-scroll-${scrollDirection}`}>
             <div className="container navbar-container">
                 <h1>
                     <Link to="/" className="brand">
