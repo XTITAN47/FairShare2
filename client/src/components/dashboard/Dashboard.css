@@ -37,6 +37,37 @@
   --blue-gradient: linear-gradient(135deg, #1a2530, #2c3e50);
 }
 
+.has-app-sidebar .dashboard-container {
+  max-width: none;
+  margin: 0;
+  padding: 1.25rem 1.5rem 2.5rem;
+  gap: 1.25rem;
+}
+
+.has-app-sidebar .dashboard-header {
+  margin-bottom: 0;
+  border: 1px solid #263648;
+  border-left: 0;
+  border-radius: 1rem;
+  background: #1d2c3b;
+  box-shadow: none;
+}
+
+.has-app-sidebar .summary-card,
+.has-app-sidebar .groups-section,
+.has-app-sidebar .invitations-section {
+  border: 1px solid #263648;
+  border-radius: 1rem;
+  background: #17232f;
+  box-shadow: none;
+}
+
+@media (max-width: 900px) {
+  .has-app-sidebar .dashboard-container {
+    padding: 1rem 1rem 2rem;
+  }
+}
+
 /* Invitation styles */
 .invitations-section {
   margin-bottom: 2rem;

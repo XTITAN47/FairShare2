@@ -1,5 +1,5 @@
 .auth-page {
-  min-height: calc(100dvh - 52px);
+  min-height: 100dvh;
   padding: 1.5rem;
   overflow: hidden;
   background: var(--color-bg-base);
@@ -117,7 +117,7 @@
 
 @media (max-width: 700px) {
   .auth-page {
-    min-height: calc(100dvh - 52px);
+    min-height: 100dvh;
     padding: 1rem 0 2rem;
   }
 

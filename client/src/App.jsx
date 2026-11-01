@@ -143,46 +143,48 @@ function App() {
         <div className="App">
           <Navbar />
           <NotificationManager />
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/register" element={<AuthPage />} />
-            <Route path="/login" element={<AuthPage />} />
-            <Route path="/profile" element={
-              <PrivateRoute>
-                <Profile />
-              </PrivateRoute>
-            } />
-            <Route path="/dashboard" element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            } />
-            <Route path="/groups/create" element={
-              <PrivateRoute>
-                <CreateGroup />
-              </PrivateRoute>
-            } />
-            <Route path="/groups/:id" element={
-              <PrivateRoute>
-                <GroupDetail />
-              </PrivateRoute>
-            } />
-            <Route path="/expenses/add/:groupId" element={
-              <PrivateRoute>
-                <AddExpense />
-              </PrivateRoute>
-            } />
-            <Route path="/expenses/settlement/:groupId" element={
-              <PrivateRoute>
-                <SettlementPlan />
-              </PrivateRoute>
-            } />
-            <Route path="/expenses/analysis/:groupId" element={
-              <PrivateRoute>
-                <ExpenseAnalysis />
-              </PrivateRoute>
-            } />
-          </Routes>
+          <div className="app-main">
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/register" element={<AuthPage />} />
+              <Route path="/login" element={<AuthPage />} />
+              <Route path="/profile" element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              } />
+              <Route path="/dashboard" element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              } />
+              <Route path="/groups/create" element={
+                <PrivateRoute>
+                  <CreateGroup />
+                </PrivateRoute>
+              } />
+              <Route path="/groups/:id" element={
+                <PrivateRoute>
+                  <GroupDetail />
+                </PrivateRoute>
+              } />
+              <Route path="/expenses/add/:groupId" element={
+                <PrivateRoute>
+                  <AddExpense />
+                </PrivateRoute>
+              } />
+              <Route path="/expenses/settlement/:groupId" element={
+                <PrivateRoute>
+                  <SettlementPlan />
+                </PrivateRoute>
+              } />
+              <Route path="/expenses/analysis/:groupId" element={
+                <PrivateRoute>
+                  <ExpenseAnalysis />
+                </PrivateRoute>
+              } />
+            </Routes>
+          </div>
         </div>
       </Router>
     </AuthContext.Provider>

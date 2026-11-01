@@ -17,6 +17,17 @@ const Navbar = () => {
         setIsLandingPage(location.pathname === '/');
     }, [location]);
 
+    const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+
+    useEffect(() => {
+        document.body.classList.toggle('has-app-sidebar', isAuthenticated);
+        document.body.classList.toggle('has-auth-page', isAuthPage);
+        return () => {
+            document.body.classList.remove('has-app-sidebar');
+            document.body.classList.remove('has-auth-page');
+        };
+    }, [isAuthenticated, isAuthPage]);
+
     useEffect(() => {
         let previousScroll = window.scrollY;
         let frameId = 0;
@@ -80,13 +91,23 @@ const Navbar = () => {
     };
 
     const authLinks = (
-        <ul>
+        <ul className="app-sidebar-links">
             <li>
-                <Link to="/dashboard">
+                <Link to="/dashboard" className={location.pathname === '/dashboard' ? 'app-nav-active' : ''}>
                     <i className="fas fa-th-large"></i> Dashboard
                 </Link>
             </li>
-            <li className="profile-menu-item" ref={profileMenuRef}>
+            <li>
+                <Link to="/groups/create" className={location.pathname === '/groups/create' ? 'app-nav-active' : ''}>
+                    <i className="fas fa-users"></i> Groups
+                </Link>
+            </li>
+            <li>
+                <Link to="/profile" className={location.pathname === '/profile' ? 'app-nav-active' : ''}>
+                    <i className="fas fa-user"></i> Profile
+                </Link>
+            </li>
+            <li className="profile-menu-item app-profile-menu" ref={profileMenuRef}>
                 <button
                     type="button"
                     className="profile-link profile-trigger"
@@ -149,7 +170,7 @@ const Navbar = () => {
     );
 
     return (
-        <nav className={`navbar ${isLandingPage ? 'navbar-landing' : ''} ${isScrolled ? 'navbar-scrolled' : ''} navbar-scroll-${scrollDirection}`}>
+        <nav className={`navbar ${isAuthenticated ? 'app-sidebar' : ''} ${isLandingPage ? 'navbar-landing' : ''} ${isScrolled ? 'navbar-scrolled' : ''} navbar-scroll-${scrollDirection}`}>
             <div className="container navbar-container">
                 <h1>
                     <Link to="/" className="brand">
