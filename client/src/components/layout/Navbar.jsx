@@ -124,13 +124,18 @@ const Navbar = () => {
                 <>
                     <li><a href="#story">How it works</a></li>
                     <li><a href="#features">Features</a></li>
+                    <li>
+                        <Link to="/login" className="login-btn">
+                            Log in
+                        </Link>
+                    </li>
                     <li><Link to="/register" className="signup-btn">Get started</Link></li>
                 </>
             ) : (
                 <>
                     <li>
                         <Link to="/login" className="login-btn">
-                            <i className="fas fa-sign-in-alt"></i> Log in
+                            Log in
                         </Link>
                     </li>
                     <li>

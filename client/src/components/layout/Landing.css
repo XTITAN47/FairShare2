@@ -187,20 +187,17 @@
 .headline-word {
   display: inline-block;
   min-width: 8ch;
-  animation: headlineWordIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
-  will-change: transform, opacity, filter;
+  border-right: 0.08em solid var(--color-amber);
+  padding-right: 0.08em;
+  animation: typewriterCursor 0.8s steps(1) infinite;
 }
 
-@keyframes headlineWordIn {
-  from {
-    opacity: 0;
-    transform: translateY(0.35em);
-    filter: blur(4px);
+@keyframes typewriterCursor {
+  0%, 49% {
+    border-color: var(--color-amber);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
+  50%, 100% {
+    border-color: transparent;
   }
 }
 
@@ -211,6 +208,10 @@
   .navbar-scrolled .navbar-container {
     animation: none;
     transition: none;
+  }
+
+  .headline-word {
+    border-right-color: transparent;
   }
 }
 
@@ -605,6 +606,12 @@
     letter-spacing: -0.05em;
   }
 
+  .headline-word {
+    display: inline-block;
+    min-width: 5.5ch;
+    color: var(--color-amber);
+  }
+
   .landing-description {
     max-width: 560px;
     color: var(--color-text-muted);
@@ -631,7 +638,7 @@
     color: #06281a;
     font-weight: 800;
     text-decoration: none;
-    transition: background-color 0.45s ease, border-color 0.45s ease, transform 0.45s ease;
+    transition: background-color 0.45s ease, border-color 0.45s ease, color 0.45s ease, box-shadow 0.45s ease, transform 0.45s ease;
   }
 
   .landing-button:hover {

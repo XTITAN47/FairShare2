@@ -3,10 +3,15 @@ import { Link, Navigate } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import './Landing.css';
 
+const audiences = ['Family', 'Friends', 'Colleagues', 'Groups'];
+
 const Landing = () => {
     const { isAuthenticated } = useContext(AuthContext);
     const storyRef = useRef(null);
     const [storyProgress, setStoryProgress] = useState(0);
+    const [audienceIndex, setAudienceIndex] = useState(0);
+    const [displayedAudience, setDisplayedAudience] = useState(audiences[0]);
+    const [isDeletingAudience, setIsDeletingAudience] = useState(false);
 
     useEffect(() => {
         let frameId = 0;
@@ -35,6 +40,28 @@ const Landing = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const targetAudience = audiences[audienceIndex];
+        const isComplete = displayedAudience === targetAudience;
+        const delay = isDeletingAudience ? 75 : isComplete ? 2200 : 125;
+        const timeoutId = window.setTimeout(() => {
+            if (isDeletingAudience) {
+                if (displayedAudience.length === 0) {
+                    setAudienceIndex((index) => (index + 1) % audiences.length);
+                    setIsDeletingAudience(false);
+                } else {
+                    setDisplayedAudience((audience) => audience.slice(0, -1));
+                }
+            } else if (isComplete) {
+                setIsDeletingAudience(true);
+            } else {
+                setDisplayedAudience(targetAudience.slice(0, displayedAudience.length + 1));
+            }
+        }, delay);
+
+        return () => window.clearTimeout(timeoutId);
+    }, [audienceIndex, displayedAudience, isDeletingAudience]);
+
     // Add landing class to body when component mounts and remove when unmounts
     useEffect(() => {
         document.body.classList.add('has-landing-page');
@@ -60,7 +87,12 @@ const Landing = () => {
         <section className="landing">
             <section className="landing-hero">
                 <p className="landing-eyebrow">Group expense splitting</p>
-                <h1>Split every bill fairly.</h1>
+                <h1>
+                    Split every bill fairly among{' '}
+                    <span className="headline-word" aria-live="polite">
+                        {displayedAudience}
+                    </span>
+                </h1>
                 <p className="landing-description">
                     FairShare keeps shared costs clear for trips, flats and teams. Add an expense and every member instantly sees their share.
                 </p>
