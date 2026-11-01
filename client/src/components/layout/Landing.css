@@ -584,7 +584,7 @@
     flex-direction: column;
     align-items: center;
     gap: 1.25rem;
-    padding-top: 2rem;
+    padding-top: 3rem;
     text-align: center;
   }
 
@@ -834,7 +834,7 @@
     }
 
     .landing-hero {
-      padding-top: 1rem;
+      padding-top: 2rem;
     }
 
     .landing-hero h1 {
